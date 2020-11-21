@@ -1,0 +1,85 @@
+{
+  "name": "public_comment",
+  "env": {
+    "ALLOWED_HOSTS": {
+      "description": "The server names that are allowed to connect to this app.",
+      "value": ".herokuapp.com"
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "description": "AWS access key."
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "AWS secret access key."
+    },
+    "AWS_STORAGE_BUCKET_NAME": {
+      "description": "AWS S3 bucket where uploaded files are stored."
+    },
+    "DEFAULT_FROM_EMAIL": {
+      "description": "Email address used as the from address on emails sent from the app.",
+      "value": "webmaster@localhost"
+    },
+    "DJANGO_DEBUG": {
+      "description": "Set to True to enable debugging. This should not be True for a production app.",
+      "value": "False"
+    },
+    "DJANGO_SETTINGS_MODULE": {
+      "description": "The Django settings file to use.",
+      "value": "public_comment.settings.production"
+    },
+    "EMAIL_HOST": {
+      "description": "SMTP settings, see Django documentation",
+      "value": "smtp.sendgrid.net"
+    },
+    "EMAIL_HOST_PASSWORD": {
+      "description": "SMTP settings, see Django documentation"
+    },
+    "EMAIL_HOST_USER": {
+      "description": "SMTP settings, see Django documentation",
+      "value": "apikey"
+    },
+    "EMAIL_PORT": {
+      "description": "SMTP settings, see Django documentation",
+      "value": "587"
+    },
+    "EMAIL_USE_SSL": {
+      "description": "SMTP settings, see Django documentation",
+      "value": "False"
+    },
+    "EMAIL_USE_TLS": {
+      "description": "SMTP settings, see Django documentation",
+      "value": "True"
+    },
+    "NEW_RELIC_APP_NAME": {
+      "description": "App name to use for identifying the app in Newrelic. Has no effect if NEW_RELIC_LICENSE_KEY is not set.",
+      "value": "Public Commenter"
+    },
+    "NEW_RELIC_ENVIRONMENT": {
+      "description": "The environment to use from the newrelic.ini config. Has no effect if NEW_RELIC_LICENSE_KEY is not set.",
+      "value": "production"
+    },
+    "SECRET_KEY": {
+      "description": "Deployment-specific secret key. Should be random.",
+      "generator": "secret"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    },
+    "celery": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:hobby-dev"
+    },
+    {
+      "plan": "memcachedcloud:30"
+    },
+    {
+      "plan": "rediscloud:30"
+    }
+  ],
+  "stack": "container"
+}

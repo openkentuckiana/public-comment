@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+
+{% block title %}Sign Out{% endblock title %}
+
+{% block content %}
+
+
+<div id="login">
+    <form id="login-form" method="post" novalidate>
+        <h2>Signed Out</h2>
+        {% csrf_token %}
+        <p>You have been signed out.</p>
+        <p>
+            {% url 'sign-in' as sign_in_url %}
+            {% bootstrap_button 'Sign In Again' button_type='link' extra_classes='mb-2 mr-sm-2 btn-block' href=sign_in_url %}
+        </p>
+    </form>
+</div>
+
+{% endblock %}

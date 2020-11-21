@@ -1,0 +1,15 @@
+#!/bin/sh
+
+docker-compose run --rm app black . -l 128; bs=$?
+docker-compose run --rm app isort --multi-line=3 --trailing-comma --force-grid-wrap=0 --use-parentheses --line-width=128 --atomic --recursive .; iss=$?
+
+if [[ $bs -eq 0 ]] && [[ iss -eq 0 ]]
+then
+    git add .
+else
+    echo
+    echo "There were problems formatting files."
+    echo "Please fix the problems before committing."
+    echo
+    exit 1
+fi

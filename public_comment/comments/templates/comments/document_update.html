@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block content %}
+
+{% block breadcrumbs %}
+    {% clear_breadcrumbs %}
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Documents" "documents" %}
+    {% breadcrumb object.document_id "document-detail" object.slug %}
+    {% breadcrumb "Edit" "" %}
+{% endblock %}
+
+{% render_breadcrumbs %}
+
+<form method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% url 'document-detail' object.slug as edit_url %}
+    {% bootstrap_button 'Save' button_type='submit' extra_classes='mb-2 mr-sm-2' %}
+    {% bootstrap_button 'Cancel' button_type='link' button_class='btn-danger' extra_classes='mb-2 mr-sm-2' href=edit_url %}
+</form>
+
+{{ form.media }}
+
+{% endblock content %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block content %}
+
+{% block breadcrumbs %}
+    {% clear_breadcrumbs %}
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Documents" "documents" %}
+    {% breadcrumb object.document_id "document_detail" object.document_id %}
+{% endblock %}
+
+{% render_breadcrumbs %}
+
+<div class="row mb-2">
+    <div class="col col-lg-8">
+        <h4 class="mb-3">Delete document?</h4>
+
+        <h5>{{ object.title }}</h5>
+    </div>
+</div>
+
+{% if comments_count %}
+    <div class="row mb-2">
+        <div class="col">
+            <p class="strong">Deleting the document will also delete {{ comments_count }} comment{{ comments_count|pluralize }} it has received.</p>
+        </div>
+    </div>
+{% endif %}
+
+<div class="row mb-5">
+    <div class="col">
+        {% url 'documents' as documents_url %}
+        {% bootstrap_button 'Cancel' button_type='link' extra_classes='mb-2 mr-sm-2' href=documents_url %}
+        <form method="POST" action="{% url 'document-delete' object.slug %}" class="d-inline-block">
+            {% csrf_token %}
+            {% bootstrap_button 'Delete' button_type='submit' button_class='btn-danger' extra_classes='mb-2' %}
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

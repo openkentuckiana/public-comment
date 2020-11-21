@@ -1,0 +1,6 @@
+ignore:
+  - "manage.py"
+  - "public_comment"
+  - "**/tests/*.py"
+  - "**/test_*.py"
+  - "**/migrations/*.py"

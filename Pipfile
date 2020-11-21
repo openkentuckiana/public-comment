@@ -1,0 +1,52 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = ">=3.1"
+django-debug-toolbar = ">=2.1"
+django-heroku = "*"
+django-localflavor = "==2.1"
+django-maintenance-mode = ">=0.14.0"
+django-modeltranslation = ">=0.13"
+django-compressor = "*"
+python-binary-memcached = "*"
+django-bmemcached = "*"
+django-mptt = "*"
+psycopg2-binary = ">=2.8.5"
+whitenoise = {extras = ["brotli"], version = "*"}
+libsass = "*"
+phonenumberslite = "*"
+gunicorn = ">=19.9.0"
+django-sass-processor = {git = "https://github.com/jrief/django-sass-processor",ref = "master"}
+httpx = "*"
+celery = ">=4.4.7,<5.0.0"
+django-celery-results = "*"
+redis = "*"
+respx = "*"
+django-markdownx = "*"
+django-storages = "*"
+boto3 = "*"
+django-bootstrap4 = "*"
+django-bootstrap-breadcrumbs = "*"
+django-active-link = "*"
+django-tables2 = "*"
+django-filter = "*"
+tablib = "*"
+django-decorator-include = "*"
+django-csp = "*"
+newrelic = "*"
+
+[dev-packages]
+black = "==19.3b0"
+coverage = "*"
+codecov = "*"
+freezegun = "*"
+isort = "*"
+mock = "*"
+pre-commit = "==1.11.0"
+PyHamcrest = "*"
+
+[requires]
+python_version = "3.8"

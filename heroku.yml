@@ -1,0 +1,20 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+build:
+  docker:
+    web: Dockerfile
+release:
+  command:
+    - ./manage.py migrate
+  image: web
+run:
+  web:
+    command:
+      - /app/heroku-web-entrypoint.sh
+    image: web
+  celery:
+    command:
+      - /app/heroku-celery-entrypoint.sh
+    image: web

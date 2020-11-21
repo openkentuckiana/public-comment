@@ -1,0 +1,15 @@
+{% extends "base_public.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+{% if document.organization.thank_you_page_content %}
+    {{ document.organization.formatted_thank_you_page_content|safe }}
+{% else %}
+    <p>{% translate "Thank you for submitting a comment!" %}</p>
+    <p>{% translate "You will receive an email confirmation once your comment has been submitted to regulations.gov." %}</p>
+{% endif %}
+
+
+{% endblock content %}

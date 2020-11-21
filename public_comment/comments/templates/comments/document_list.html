@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+{% load render_table from django_tables2 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block content %}
+
+{% block breadcrumbs %}
+    {% clear_breadcrumbs %}
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Documents" "documents" %}
+{% endblock %}
+
+{% render_breadcrumbs %}
+
+<div class="d-flex flex-row">
+    <div class="p-2">
+        {% if filter %}
+            <form action="" method="get" id="filter-form" class="form-inline">
+                {% bootstrap_field filter.form.document_id show_label=False field_class='mb-2 mr-sm-2' %}
+                {% bootstrap_field filter.form.text show_label=False field_class='mb-2 mr-sm-2' %}
+                {% bootstrap_field filter.form.created_at show_label=False field_class='mb-2 mr-sm-2' %}
+                <div class="form-group">
+                    {% bootstrap_button 'Filter' extra_classes='mb-2 mr-sm-2' %}
+                    {% bootstrap_button 'Clear' button_type='link' button_class='btn-secondary' extra_classes='mb-2' href='.' %}
+                </div>
+            </form>
+        {% endif %}
+    </div>
+    <div class="ml-auto p-2">
+        {% url 'document-create' as document_create_url %}
+        {% bootstrap_button 'Add New' button_type='link' extra_classes='mb-2' href=document_create_url %}
+    </div>
+</div>
+
+{% render_table table 'table.html' %}
+
+{% endblock content %}

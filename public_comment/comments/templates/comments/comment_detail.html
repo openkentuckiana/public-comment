@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block content %}
+
+{% block breadcrumbs %}
+    {% clear_breadcrumbs %}
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Comments" "comments" %}
+    {% breadcrumb object.id "comment_detail" object.id %}
+{% endblock %}
+
+{% render_breadcrumbs %}
+
+<div class="row">
+    <div class="col">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th scope="row">Document</th>
+                    <td><a href="{% url 'document-detail' object.document.slug %}">{{ object.document }}</a></td>
+                </tr>
+                <tr>
+                    <th scope="row">Commenter</th>
+                    <td>{{ object.commenter.first_name }}&nbsp;{{ object.commenter.last_name }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Commenter Email</th>
+                    <td>{{ object.commenter.email }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Was Submitted?</th>
+                    <td>
+                        {% if object.was_submitted %}
+                            Yes
+                        {% else %}
+                            No
+                        {% endif %}
+                        {% if object.client_mode == "T" %}
+                            (in testing mode, not sent to regulations.gov)
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Submitted Date</th>
+                    <td>{{ object.submitted_at }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Comment mode</th>
+                    <td>
+                        {% if object.client_mode == "T" %}
+                            Testing
+                        {% else %}
+                            Live
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Comment</th>
+                    <td>{{ object.comment }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <form method="POST" action="{% url 'comment-resubmit' object.id %}" class="d-inline-block">
+            {% csrf_token %}
+            {% bootstrap_button 'Resubmit comment' button_type='submit' extra_classes='mb-2' %}
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

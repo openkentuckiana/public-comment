@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+
+{% block title %}Sign In{% endblock title %}
+
+{% block content %}
+
+
+<div id="login">
+    <form id="login-form" method="post" novalidate>
+        <h2>Sign In</h2>
+        {% csrf_token %}
+        {% bootstrap_form_errors form %}
+        {% bootstrap_field form.username show_label=False %}
+        {% bootstrap_field form.password show_label=False %}
+        {% bootstrap_button 'Sign In' button_type='submit' extra_classes='mb-2 mr-sm-2 btn-block' %}
+    </form>
+</div>
+
+{% endblock %}

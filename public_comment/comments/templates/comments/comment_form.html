@@ -1,0 +1,50 @@
+{% extends "base_public.html" %}
+
+{% load i18n %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+
+{% if form.document.comment_end_date_passed %}
+    <div class="card-body mb-4">
+        <h3>Comment period closed on {{ form.document.comment_end_date }}.</h3>
+    </div>
+{% elif form.document.comment_start_date_not_reached %}
+    <div class="card-body mb-4">
+        <h3>Comment period starts at {{ form.document.comment_start_date }}.</h3>
+    </div>
+{% elif not form.document.is_accepting_comments %}
+    <div class="card-body mb-4">
+        <h3>Not accepting comments at this time.</h3>
+    </div>
+{% else %}
+    <div class="card-body mb-3">
+        {% if form.document.organization.comment_page_header %}
+            <div class="mb-2">
+                {{ form.document.organization.formatted_comment_page_header|safe }}
+            </div>
+        {% endif %}
+
+        {% if form.document.description %}
+            {{ form.document.formatted_description|safe }}
+        {% else %}
+            <h2>{{ form.document.title }}</h2>
+        {% endif %}
+    </div>
+
+    <div class="card-body">
+        <h3>{% trans 'Leave a comment' %}</h3>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% bootstrap_button 'Submit your comment' button_type='submit' extra_classes='mb-2 mr-sm-2' %}
+        </form>
+
+        <p><small class="text-muted">{% trans 'You will receive an email notification when your comment has been submitted.' %}</small></p>
+    </div>
+
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+
+<h1 class="display-4">{{ user.organization.name }}</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Documents</h3>
+        <div class="card mb-3">
+          <div class="card-header">
+            Accepting Comments
+          </div>
+          <div class="card-body">
+            <h1 class="display-3 card-title">{{ documents_accepting_comments_count }}</h1>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            Total Documents
+          </div>
+          <div class="card-body">
+            <h1 class="display-3 card-title">{{ total_document_count }}</h1>
+          </div>
+        </div>
+
+        {% url 'documents' as documents_url %}
+        {% url 'document-create' as document_create_url %}
+        {% bootstrap_button 'View All Documents' button_type='link' href=documents_url extra_classes='mb-2' %}
+        {% bootstrap_button 'Add New Document' button_type='link' extra_classes='mb-2' href=document_create_url %}
+    </div>
+
+    <div class="col-md-6">
+        <h3>Comments</h3>
+        <div class="card mb-3">
+          <div class="card-header">
+              Comments on Active Documents
+          </div>
+          <div class="card-body">
+            <h1 class="display-3 card-title">{{ comments_on_active_documents_count }}</h1>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            Total Comments
+          </div>
+          <div class="card-body">
+            <h1 class="display-3 card-title">{{ total_comment_count }}</h1>
+          </div>
+        </div>
+
+        {% url 'comments' as comments_url %}
+        {% bootstrap_button 'View All Comments' button_type='link' href=comments_url extra_classes='mb-2' %}
+    </div>
+</div>
+
+{% endblock content %}

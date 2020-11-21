@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+{% load render_table from django_tables2 %}
+{% load export_url from django_tables2 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block content %}
+
+{% block breadcrumbs %}
+    {% clear_breadcrumbs %}
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Comments" "comments" %}
+{% endblock %}
+
+{% render_breadcrumbs %}
+
+{% if filter %}
+    <form action="" method="get" id="filter-form" class="form-inline">
+        {% bootstrap_field filter.form.document show_label=False field_class='mb-2 mr-sm-2' %}
+        {% bootstrap_field filter.form.comment show_label=False field_class='mb-2 mr-sm-2' %}
+        {% bootstrap_field filter.form.created_at show_label=False field_class='mb-2 mr-sm-2' %}
+        {% bootstrap_field filter.form.was_submitted show_label=False field_class='mb-2 mr-sm-2' %}
+        <div class="form-group">
+            {% bootstrap_button 'Filter' extra_classes='mb-2 mr-sm-2' %}
+            {% bootstrap_button 'Clear' button_type='link' button_class='btn-secondary' extra_classes='mb-2' href='.' %}
+        </div>
+    </form>
+{% endif %}
+
+
+
+<form method="POST" action="{% url 'comments-resubmit' %}">
+    {% csrf_token %}
+    {% render_table table 'table.html' %}
+    <a class="btn btn-primary mb-2 mr-sm-2" href="{% export_url 'csv' %}" role="button" data-turbolinks="false">Export CSV</a>
+    {% bootstrap_button 'Resubmit' extra_classes='mb-2 mr-sm-2 float-right' %}
+</form>
+
+
+
+{% endblock content %}
