@@ -22,8 +22,8 @@ from .views import (
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),
     path("account/", include("organizations.urls")),
-    path("submit-comment/<slug:document_slug>", comment_view, name="comment"),
-    path("submit-comment/thanks/<slug:document_slug>", comment_thanks_view, name="comment-thanks"),
+    path("submit-comment/<slug:organization_slug>/<slug:document_slug>", comment_view, name="comment"),
+    path("submit-comment/<slug:organization_slug>/<slug:document_slug>/thanks/", comment_thanks_view, name="comment-thanks"),
     path("<slug:organization_slug>/comments/", FilteredCommentListView.as_view(), name="comments"),
     path("<slug:organization_slug>/comments/<slug:pk>", CommentDetailView.as_view(), name="comment-detail"),
     path(

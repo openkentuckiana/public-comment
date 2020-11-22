@@ -17,6 +17,7 @@ from django_tables2.export import ExportMixin
 
 from lib.regulationsgov.client import get_document
 from lib.views import OrganizationView
+from organizations.models import Organization
 
 from . import tasks
 from .filters import CommentsFilter, DocumentsFilter
@@ -196,8 +197,9 @@ class FilteredCommentListView(OrganizationView, ExportMixin, SingleTableMixin, F
 
 @csrf_exempt
 @xframe_options_exempt
-def comment_view(request, document_slug):
-    document = get_object_or_404(Document, slug=document_slug)
+def comment_view(request, organization_slug, document_slug):
+    organization = get_object_or_404(Organization, slug=organization_slug)
+    document = get_object_or_404(Document, organization=organization, slug=document_slug)
     if request.method == "POST":
         form = CommentForm(request.POST, document=document)
         if form.is_valid():
@@ -214,7 +216,7 @@ def comment_view(request, document_slug):
             )
             comment.save()
             tasks.submit_comment.delay(comment.id)
-            return HttpResponseRedirect(reverse("comment-thanks", args=[document_slug]))
+            return HttpResponseRedirect(reverse("comment-thanks", args=[organization_slug, document_slug]))
         else:
             messages.error(request, _("There were problems with your submission. Please correct them below."))
     else:
@@ -225,5 +227,10 @@ def comment_view(request, document_slug):
 
 @csrf_exempt
 @xframe_options_exempt
-def comment_thanks_view(request, document_slug):
-    return render(request, "comments/comment_thanks.html", {"document": get_object_or_404(Document, slug=document_slug)})
+def comment_thanks_view(request, organization_slug, document_slug):
+    organization = get_object_or_404(Organization, slug=organization_slug)
+    return render(
+        request,
+        "comments/comment_thanks.html",
+        {"document": get_object_or_404(Document, organization=organization, slug=document_slug)},
+    )

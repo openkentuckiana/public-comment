@@ -138,7 +138,7 @@
                         <small class="text-muted">People can use this URL to submit comments for this document.</small>
                     </th>
                     <td>
-                        <a href="{% url 'comment' object.slug %}">https://{{ request.META.HTTP_HOST }}{% url 'comment' object.slug %}</a>
+                        <a href="{% url 'comment' request.user.organization.slug object.slug %}">https://{{ request.META.HTTP_HOST }}{% url 'comment' request.user.organization.slug object.slug %}</a>
                     </td>
                 </tr>
                 <tr>
@@ -148,7 +148,7 @@
                     </th>
                     <td>
                         <pre>
-&lt;style&gt;iframe#comment-{{object.slug}} { width: 1px; min-width: 100%; }&lt;/style&gt;&lt;iframe src="https://{{ request.META.HTTP_HOST }}{% url 'comment' object.slug %}" style="border: none;" id="comment-{{object.slug}}"&gt;&lt;/iframe&gt;&lt;script src="https://{{ request.META.HTTP_HOST }}{% static 'js/iframeResizer.js' %}" type="text/javascript"&gt;&lt;/script>&lt;script&gt;iFrameResize({}, '#comment-{{object.slug}}')&lt;/script&gt;
+&lt;style&gt;iframe#comment-{{object.slug}} { width: 1px; min-width: 100%; }&lt;/style&gt;&lt;iframe src="https://{{ request.META.HTTP_HOST }}{% url 'comment' request.user.organization.slug object.slug %}" style="border: none;" id="comment-{{object.slug}}"&gt;&lt;/iframe&gt;&lt;script src="https://{{ request.META.HTTP_HOST }}{% static 'js/iframeResizer.js' %}" type="text/javascript"&gt;&lt;/script>&lt;script&gt;iFrameResize({}, '#comment-{{object.slug}}')&lt;/script&gt;
                         </pre>
                     </td>
                 </tr>
@@ -159,7 +159,7 @@
                     </th>
                     <td>
                         <pre data-turbolinks="false">
-<iframe id="iframe-preview" src="{% url 'comment' object.slug %}"></iframe>
+<iframe id="iframe-preview" src="{% url 'comment' request.user.organization.slug object.slug %}"></iframe>
                         </pre>
                         <script src="{% static 'js/iframeResizer.js' %}" type="text/javascript" nonce="{{request.csp_nonce}}"></script>
                         <script nonce="{{request.csp_nonce}}">
