@@ -53,7 +53,7 @@ class DocumentCreateForm(forms.ModelForm):
         document_id = cleaned_data.get("document_id")
         organization = self.user.organization
 
-        if Document.objects.for_organization(organization=organization, document_id=document_id, deleted_at=None).count():
+        if Document.objects.filter(document_id=document_id, deleted_at=None).count():
             raise ValidationError("You already have created this document")
 
         try:

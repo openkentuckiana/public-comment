@@ -7,5 +7,5 @@ urlpatterns = [
     path("sign-in/", SignInView.as_view(), name="sign-in"),
     path("sign-out/", SignOutView.as_view(), name="sign-out"),
     path("edit/", UserUpdateView.as_view(), name="user-update"),
-    path("org/edit/", OrganizationUpdateView.as_view(), name="org-update"),
+    path("<slug:organization_slug>/edit/", OrganizationUpdateView.as_view(), name="org-update"),
 ]

@@ -26,8 +26,8 @@
           </div>
         </div>
 
-        {% url 'documents' as documents_url %}
-        {% url 'document-create' as document_create_url %}
+        {% url 'documents' user.organization.slug as documents_url %}
+        {% url 'document-create' user.organization.slug  as document_create_url %}
         {% bootstrap_button 'View All Documents' button_type='link' href=documents_url extra_classes='mb-2' %}
         {% bootstrap_button 'Add New Document' button_type='link' extra_classes='mb-2' href=document_create_url %}
     </div>
@@ -51,7 +51,7 @@
           </div>
         </div>
 
-        {% url 'comments' as comments_url %}
+        {% url 'comments' user.organization.slug as comments_url %}
         {% bootstrap_button 'View All Comments' button_type='link' href=comments_url extra_classes='mb-2' %}
     </div>
 </div>

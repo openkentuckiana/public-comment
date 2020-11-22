@@ -35,7 +35,7 @@ def submit_comment(comment: Comment):
         }
 
         if comment.client_mode == ClientMode.TESTING:
-            respx.post(url).mock(return_value=Response(204, json={'testing_mode': True}))
+            respx.post(url).mock(return_value=Response(204, json={"testing_mode": True}))
         response = httpx.post(url, headers={"X-Api-Key": comment.organization.regulations_gov_api_key}, data=comment_submission)
 
         return response

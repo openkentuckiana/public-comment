@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, UpdateView
 
 from lib.views import OrganizationView, ProtectedView
@@ -13,7 +13,9 @@ from organizations.models import Organization
 class SignInView(LoginView):
     authentication_form = LoginForm
     template_name = "registration/sign-in.html"
-    success_url = reverse_lazy("comments:index")
+
+    def get_success_url(self):
+        return reverse("org-index", args=[self.request.user.organization.slug])
 
 
 class SignOutView(LogoutView):
@@ -29,8 +31,8 @@ class AccountView(ProtectedView):
 
 class UserUpdateView(ProtectedView, FormView):
     template_name = "organizations/user_update.html"
-    form_class = UserUpdateForm
     success_url = reverse_lazy("account")
+    form_class = UserUpdateForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -43,7 +45,7 @@ class UserUpdateView(ProtectedView, FormView):
         return super().form_valid(form)
 
 
-class OrganizationUpdateView(SuccessMessageMixin, ProtectedView, UpdateView):
+class OrganizationUpdateView(OrganizationView, SuccessMessageMixin, UpdateView):
     template_name = "organizations/organization_update.html"
     model = Organization
     form_class = OrganizationUpdateForm

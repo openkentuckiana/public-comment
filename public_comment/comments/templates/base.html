@@ -19,32 +19,38 @@
   </head>
   <body>
         <nav class="navbar fixed-top navbar-expand-md navbar-light bg-light">
-          <a class="navbar-brand" href="{% url 'index' %}">Public Commenter</a>
+          {% if request.user.organization.slug %}
+            <a class="navbar-brand" href="{% url 'org-index' request.user.organization.slug %}">Public Commenter</a>
+          {% else %}
+            <a class="navbar-brand" href="{% url 'index' %}">Public Commenter</a>
+          {% endif %}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
 
-          <div class="collapse navbar-collapse" id="navbarToggler">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-              <li class="nav-item {% active_link 'documents' %}">
-                <a class="nav-link" href="{% url 'documents' %}">Documents</a>
-              </li>
-              <li class="nav-item {% active_link 'comments' %}">
-                <a class="nav-link" href="{% url 'comments' %}">Comments</a>
-              </li>
-            </ul>
+          {% if request.user.organization.slug %}
+              <div class="collapse navbar-collapse" id="navbarToggler">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                  <li class="nav-item {% active_link 'documents' request.user.organization.slug %}">
+                    <a class="nav-link" href="{% url 'documents' request.user.organization.slug %}">Documents</a>
+                  </li>
+                  <li class="nav-item {% active_link 'comments' request.user.organization.slug %}">
+                    <a class="nav-link" href="{% url 'comments' request.user.organization.slug %}">Comments</a>
+                  </li>
+                </ul>
 
-            <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
-                    <li class="nav-item {% active_link 'account' %}">
-                        <a class="nav-link" href="{% url 'account' %}">Your Account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'sign-out' %}">Sign out</a>
-                    </li>
-                {% endif %}
-            </ul>
-          </div>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item {% active_link 'account' request.user.organization.slug %}">
+                            <a class="nav-link" href="{% url 'account' %}">Your Account</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'sign-out' %}">Sign out</a>
+                        </li>
+                    {% endif %}
+                </ul>
+              </div>
+            {% endif %}
         </nav>
         <div class="container-lg">
             {% bootstrap_messages %}

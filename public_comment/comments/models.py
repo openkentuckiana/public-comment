@@ -4,7 +4,7 @@ from datetime import datetime
 from dateutil import tz
 from django.core.exceptions import ValidationError
 from django.core.serializers import serialize
-from django.db import connection, models
+from django.db import models
 from django.urls import reverse
 from django.utils.text import Truncator, slugify
 from markdownx.models import MarkdownxField
@@ -66,7 +66,7 @@ class Document(OrganizationOwnedModel):
         return f"https://beta.regulations.gov/document/{self.document_id}"
 
     def get_absolute_url(self):
-        return reverse("document-detail", args=[self.slug])
+        return reverse("document-detail", args=[self.organization.slug, self.slug])
 
     def formatted_description(self):
         return markdownify(str(self.description)) if self.description else ""
@@ -88,7 +88,7 @@ class Document(OrganizationOwnedModel):
     def set_from_api_response(document, api_response, organization):
         regulations_document = api_response["data"]["attributes"]
 
-        document.slug = slugify(f"{organization.url_short_name} {api_response['data']['id']}")
+        document.slug = slugify(api_response["data"]["id"])
         document.title = regulations_document["title"]
         document.document_type = regulations_document["documentType"]
         document.comment_start_date = regulations_document["commentStartDate"]
@@ -142,6 +142,9 @@ class Comment(OrganizationOwnedModel):
 
     def __str__(self):
         return f"{self.document} - {self.commenter}"
+
+    def get_absolute_url(self):
+        return reverse("comment-detail", args=[self.organization.slug, self.id])
 
     def short_comment(self):
         return Truncator(self.comment).words(15)

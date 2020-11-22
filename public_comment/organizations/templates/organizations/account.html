@@ -44,8 +44,8 @@
                 <td>{{ user.organization.organization_url }}</td>
             </tr>
             <tr>
-                <th scope="row">URL</th>
-                <td>{{ user.organization.organization_url }}</td>
+                <th scope="row">Slug</th>
+                <td>{{ user.organization.slug }}</td>
             </tr>
             <tr>
                 <th scope="row">Regulations.gov API Key</th>
@@ -82,7 +82,7 @@
         </div>
     </div>
 
-    {% url 'org-update' as edit_org_url %}
+    {% url 'org-update' request.user.organization.slug as edit_org_url %}
     {% bootstrap_button 'Edit Organization Information' button_type='link' href=edit_org_url extra_classes='mb-2' %}
 </div>
 

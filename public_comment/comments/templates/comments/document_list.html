@@ -8,8 +8,8 @@
 
 {% block breadcrumbs %}
     {% clear_breadcrumbs %}
-    {% breadcrumb "Home" "/" %}
-    {% breadcrumb "Documents" "documents" %}
+    {% breadcrumb "Home" "org-index" request.user.organization.slug %}
+    {% breadcrumb "Documents" "documents" request.user.organization.slug  %}
 {% endblock %}
 
 {% render_breadcrumbs %}
@@ -29,7 +29,7 @@
         {% endif %}
     </div>
     <div class="ml-auto p-2">
-        {% url 'document-create' as document_create_url %}
+        {% url 'document-create' request.user.organization.slug  as document_create_url %}
         {% bootstrap_button 'Add New' button_type='link' extra_classes='mb-2' href=document_create_url %}
     </div>
 </div>

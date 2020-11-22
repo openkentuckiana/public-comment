@@ -9,7 +9,7 @@
 
 {% block breadcrumbs %}
     {% clear_breadcrumbs %}
-    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Home" "org-index" request.user.organization.slug %}
     {% breadcrumb "Comments" "comments" %}
 {% endblock %}
 
@@ -30,7 +30,7 @@
 
 
 
-<form method="POST" action="{% url 'comments-resubmit' %}">
+<form method="POST" action="{% url 'comments-resubmit' request.user.organization.slug %}">
     {% csrf_token %}
     {% render_table table 'table.html' %}
     <a class="btn btn-primary mb-2 mr-sm-2" href="{% export_url 'csv' %}" role="button" data-turbolinks="false">Export CSV</a>

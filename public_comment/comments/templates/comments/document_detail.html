@@ -8,9 +8,9 @@
 
 {% block breadcrumbs %}
     {% clear_breadcrumbs %}
-    {% breadcrumb "Home" "/" %}
-    {% breadcrumb "Documents" "documents" %}
-    {% breadcrumb object.document_id "document_detail" object.document_id %}
+    {% breadcrumb "Home" "org-index" request.user.organization.slug %}
+    {% breadcrumb "Documents" "documents" request.user.organization.slug %}
+    {% breadcrumb object.document_id "document_detail" request.user.organization.slug object.document_id %}
 {% endblock %}
 
 {% render_breadcrumbs %}
@@ -112,9 +112,9 @@
 
 <div class="row mb-5">
     <div class="col">
-        {% url 'document-edit' object.slug as edit_url %}
+        {% url 'document-edit' request.user.organization.slug object.slug as edit_url %}
         {% bootstrap_button 'Edit' button_type='link' extra_classes='mb-2 mr-sm-2' href=edit_url %}
-        <form method="POST" action="{% url 'document-refresh' object.slug %}" class="d-inline-block">
+        <form method="POST" action="{% url 'document-refresh' request.user.organization.slug object.slug %}" class="d-inline-block">
             {% csrf_token %}
             {% bootstrap_button 'Refresh from Regulations.gov' button_type='submit' extra_classes='mb-2' %}
         </form>
@@ -129,7 +129,7 @@
                 <tr>
                     <th scope="row">Received Comments</th>
                     <td>
-                        <a href="{% url 'comments'%}?document={{ object.document_id }}">View Comments</a>
+                        <a href="{% url 'comments' request.user.organization.slug %}?document={{ object.document_id }}">View Comments</a>
                     </td>
                 </tr>
                 <tr>
@@ -174,7 +174,7 @@
     </div>
 </div>
 
-{% url 'document-delete' object.slug as delete_url %}
+{% url 'document-delete' request.user.organization.slug object.slug as delete_url %}
 {% bootstrap_button 'Delete Document' button_type='link' button_class='btn-danger' href=delete_url extra_classes='mb-2' %}
 
 {% endblock content %}

@@ -7,8 +7,8 @@
 
 {% block breadcrumbs %}
     {% clear_breadcrumbs %}
-    {% breadcrumb "Home" "/" %}
-    {% breadcrumb "Comments" "comments" %}
+    {% breadcrumb "Home" "org-index" request.user.organization.slug %}
+    {% breadcrumb "Comments" "comments" request.user.organization.slug %}
     {% breadcrumb object.id "comment_detail" object.id %}
 {% endblock %}
 
@@ -20,7 +20,7 @@
             <tbody>
                 <tr>
                     <th scope="row">Document</th>
-                    <td><a href="{% url 'document-detail' object.document.slug %}">{{ object.document }}</a></td>
+                    <td><a href="{% url 'document-detail' request.user.organization.slug object.document.slug %}">{{ object.document }}</a></td>
                 </tr>
                 <tr>
                     <th scope="row">Commenter</th>
@@ -68,7 +68,7 @@
 
 <div class="row">
     <div class="col">
-        <form method="POST" action="{% url 'comment-resubmit' object.id %}" class="d-inline-block">
+        <form method="POST" action="{% url 'comment-resubmit' request.user.organization.slug object.id %}" class="d-inline-block">
             {% csrf_token %}
             {% bootstrap_button 'Resubmit comment' button_type='submit' extra_classes='mb-2' %}
         </form>

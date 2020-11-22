@@ -104,7 +104,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "maintenance_mode.middleware.MaintenanceModeMiddleware",
     "csp.middleware.CSPMiddleware",
-    "comments.middleware.TurbolinksMiddleware",
+    "lib.middleware.TurbolinksMiddleware",
     "lib.middleware.OrganizationMiddleware",
     "django.contrib.flatpages.middleware.FlatpageFallbackMiddleware",
 ]

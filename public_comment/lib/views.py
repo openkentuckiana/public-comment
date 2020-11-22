@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 
@@ -20,17 +21,8 @@ class ProtectedView(View):
 
 
 class OrganizationView(ProtectedView):
-    """
-    Overrides get_queryset used by default views and limits results to the organization set by OrganizationMiddleware.
-    **Must be the first in the list of a view's parent classes/mixins**
-    """
-
-    def get_queryset(self):
-        if hasattr(super(), "get_queryset"):
-            queryset = super().get_queryset()
-
-            organization = getattr(_thread_locals, "organization")
-            logger.info("Setting organization on queryset to %s (%s)", organization, organization.id)
-
-            queryset = queryset.filter(organization=organization)
-            return queryset
+    def dispatch(self, request, *args, **kwargs):
+        self.organization = getattr(_thread_locals, "organization")
+        if kwargs["organization_slug"] != self.organization.slug:
+            raise PermissionDenied("You may not access this organization's data.")
+        return super().dispatch(request, *args, **kwargs)

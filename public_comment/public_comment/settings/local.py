@@ -15,11 +15,11 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 ########## END EMAIL CONFIGURATION
 
 ########## TOOLBAR CONFIGURATION
-# MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
-#
-# INSTALLED_APPS += ("debug_toolbar",)
-#
-# DEBUG_TOOLBAR_PATCH_SETTINGS = False
+MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
+
+INSTALLED_APPS += ("debug_toolbar",)
+
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # This should NEVER be used outside of local.py
 INTERNAL_IPS = type(str("c"), (), {"__contains__": lambda *a: True})()

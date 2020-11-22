@@ -9,8 +9,7 @@
     {% clear_breadcrumbs %}
     {% breadcrumb "Home" "org-index" request.user.organization.slug %}
     {% breadcrumb "Documents" "documents" request.user.organization.slug %}
-    {% breadcrumb object.document_id "document-detail" request.user.organization.slug object.slug %}
-    {% breadcrumb "Edit" "" %}
+    {% breadcrumb "New" "" %}
 {% endblock %}
 
 {% render_breadcrumbs %}
@@ -18,9 +17,9 @@
 <form method="post">
     {% csrf_token %}
     {% bootstrap_form form %}
-    {% url 'document-detail' request.user.organization.slug object.slug as edit_url %}
-    {% bootstrap_button 'Save' button_type='submit' extra_classes='mb-2 mr-sm-2' %}
-    {% bootstrap_button 'Cancel' button_type='link' button_class='btn-danger' extra_classes='mb-2 mr-sm-2' href=edit_url %}
+    {% bootstrap_button 'Add' button_type='submit' extra_classes='mb-2 mr-sm-2' %}
+    {% url 'documents' request.user.organization.slug as documents_url %}
+{% bootstrap_button 'Cancel' button_type='link' button_class='btn-danger' extra_classes='mb-2 mr-sm-2' href=documents_url %}
 </form>
 
 {{ form.media }}

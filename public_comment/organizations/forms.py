@@ -81,7 +81,6 @@ class OrganizationUpdateForm(forms.ModelForm):
         model = Organization
         fields = [
             "name",
-            "url_short_name",
             "organization_url",
             "regulations_gov_api_key",
             "timezone",

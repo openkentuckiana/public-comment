@@ -2,7 +2,7 @@
   pk: 1
   fields:
     name: Admin Org
-    url_short_name: Admin Org
+    slug: admin-org
     organization_url: http://example.com
     created_at: 2018-09-21 21:42:00.264807+00:00
     modified_at: 2018-09-21 21:42:00.264807+00:00
@@ -11,7 +11,7 @@
   pk: 2
   fields:
     name: User Org
-    url_short_name: User Org
+    slug: user-org
     organization_url: http://example.com
     created_at: 2018-09-21 21:42:00.264807+00:00
     modified_at: 2018-09-21 21:42:00.264807+00:00

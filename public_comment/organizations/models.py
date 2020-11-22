@@ -10,7 +10,7 @@ from lib.models import BaseModel
 
 class UserManager(BaseUserManager):
     def create_superuser(self, email, organization_name, password=None):
-        organization = Organization.objects.get_or_create(name=organization_name, url_short_name=organization_name)
+        organization = Organization.objects.get_or_create(name=organization_name, slug=organization_name)
         user = self.create_user(email, password=password, organization=organization)
         user.is_staff = True
         user.save(using=self._db)
@@ -29,8 +29,10 @@ class Organization(BaseModel):
     TIMEZONES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
 
     name = models.CharField(max_length=255)
-    url_short_name = models.CharField(
-        max_length=30, help_text="Something short to use in the URL of this org's documents (eg. ACLU)."
+    slug = models.SlugField(
+        max_length=30,
+        help_text="Something short to use in the URL of this org's documents (eg. ACLU). Cannot be changed.",
+        editable=False,
     )
     organization_url = models.URLField()
     regulations_gov_api_key = models.CharField(max_length=255, blank=True, null=True)

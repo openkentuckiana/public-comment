@@ -12,7 +12,7 @@ class CheckBoxColumnWithName(tables.CheckBoxColumn):
 
 class CommentsTable(tables.Table):
     resubmit = CheckBoxColumnWithName(accessor="pk", verbose_name="Resubmit?", exclude_from_export=True)
-    id = tables.LinkColumn("comment-detail", args=[A("pk")])
+    id = tables.LinkColumn()
     document = tables.LinkColumn(exclude_from_export=True)
     short_comment = tables.Column(orderable=False, verbose_name="Comment", exclude_from_export=True)
     commenter = tables.Column(exclude_from_export=True)

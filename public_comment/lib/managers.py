@@ -1,8 +1,12 @@
+import logging
 from datetime import datetime
 
 from django.db import models
 from django.db.models import QuerySet
-from django.shortcuts import get_object_or_404
+
+from . import _thread_locals
+
+logger = logging.getLogger(__name__)
 
 
 class SoftDeleteManager(models.Manager):
@@ -36,8 +40,11 @@ class OrganizationOwnedModelManager(SoftDeleteManager):
         self.with_deleted = kwargs.pop("deleted", False)
         super().__init__(*args, **kwargs)
 
-    def for_organization(self, organization, **kwargs):
-        return self.get_queryset().filter(organization=organization, **kwargs)
-
-    def get_for_organization(self, organization, **kwargs):
-        return get_object_or_404(self.get_queryset(), organization=organization, **kwargs)
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.model.__name__ != "Organization":
+            organization = getattr(_thread_locals, "organization", None)
+            if organization:
+                logger.info("Setting organization on queryset to %s (%s)", organization, organization.id)
+                return qs.filter(organization=organization).prefetch_related("organization")
+        return qs

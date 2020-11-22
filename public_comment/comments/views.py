@@ -2,9 +2,8 @@ import logging
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import PermissionDenied, ViewDoesNotExist
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -33,26 +32,26 @@ class IndexView(View):
         return super().__call__(*args, **kwargs)
 
     def get(self, request):
-        if self.request.user and self.request.user.is_authenticated:
-            organization = self.request.user.organization
-            total_document_count = Document.objects.for_organization(organization=organization).all().count()
-            documents_accepting_comments_count = (
-                Document.objects.for_organization(organization=organization).filter(is_accepting_comments=True).count()
-            )
-            total_comment_count = Comment.objects.for_organization(organization=organization).all().count()
-            comments_on_active_documents_count = (
-                Comment.objects.for_organization(organization=organization).filter(document__is_accepting_comments=True).count()
-            )
-            context = {
-                "user": request.user,
-                "total_document_count": total_document_count,
-                "documents_accepting_comments_count": documents_accepting_comments_count,
-                "total_comment_count": total_comment_count,
-                "comments_on_active_documents_count": comments_on_active_documents_count,
-            }
-            return render(request, "index_logged_in.html", context=context)
-        else:
-            return render(request, "index.html")
+        return render(request, "index.html")
+
+
+class OrgIndexView(OrganizationView):
+    def get(self, request, organization_slug):
+        if request.user.organization.slug != organization_slug:
+            raise PermissionDenied
+
+        total_document_count = Document.objects.all().count()
+        documents_accepting_comments_count = Document.objects.filter(is_accepting_comments=True).count()
+        total_comment_count = Comment.objects.all().count()
+        comments_on_active_documents_count = Comment.objects.filter(document__is_accepting_comments=True).count()
+        context = {
+            "user": request.user,
+            "total_document_count": total_document_count,
+            "documents_accepting_comments_count": documents_accepting_comments_count,
+            "total_comment_count": total_comment_count,
+            "comments_on_active_documents_count": comments_on_active_documents_count,
+        }
+        return render(request, "org-index.html", context=context)
 
 
 class DocumentDetailView(OrganizationView, DetailView):
@@ -70,7 +69,7 @@ class FilteredDocumentListView(OrganizationView, ExportMixin, SingleTableMixin, 
 
 
 class DocumentCreate(SuccessMessageMixin, OrganizationView, CreateView):
-    template_name = "generic_form.html"
+    template_name = "comments/document_create.html"
     form_class = DocumentCreateForm
     success_message = "Document added successfully."
 
@@ -80,25 +79,21 @@ class DocumentCreate(SuccessMessageMixin, OrganizationView, CreateView):
         return kwargs
 
 
-@login_required
-def document_refresh(request, slug):
-    if request.method == "GET":
-        raise PermissionDenied
-    else:
-        organization = request.user.organization
-        document = Document.objects.get_for_organization(organization=organization, slug=slug, deleted_at=None)
+class DocumentRefreshView(OrganizationView):
+    def post(self, request, organization_slug, slug):
+        document = Document.objects.get(slug=slug, deleted_at=None)
         try:
-            if not organization.regulations_gov_api_key:
-                raise messages.error("Missing regulations.gov API key")
+            if not self.organization.regulations_gov_api_key:
+                messages.error(request, "Missing regulations.gov API key")
             else:
-                api_document = get_document(document.document_id, organization)
-                document.set_from_api_response(document, api_document, organization)
+                api_document = get_document(document.document_id, self.organization)
+                document.set_from_api_response(document, api_document, self.organization)
                 messages.success(request, "Document successfully refreshed from regulations.gov")
         except Exception:
             logger.exception("Could not get document info from regulations.gov")
             messages.error(request, "Could not get document info from regulations.gov")
 
-        return redirect(reverse("document-detail", args=[document.slug]))
+        return redirect(reverse("document-detail", args=[self.organization.slug, document.slug]))
 
 
 class DocumentUpdate(OrganizationView, UpdateView):
@@ -131,6 +126,70 @@ class DocumentDelete(OrganizationView, DeleteView):
 
 class CommentDetailView(OrganizationView, DetailView):
     model = Comment
+
+
+class ResubmitCommentView(OrganizationView):
+    def post(self, request, organization_slug, comment_id):
+        comment = Comment.objects.get(id=comment_id)
+        if comment.was_submitted:
+            messages.error(request, "Comment has already been successfully submitted.")
+        else:
+            tasks.submit_comment.delay(comment.id)
+            messages.success(request, "Comment queued for submission.")
+        return redirect(reverse("comment-detail", args=[self.organization.slug, comment.id]))
+
+
+class ResubmitCommentsView(OrganizationView):
+    def post(self, request, organization_slug):
+
+        comment_ids = set(request.POST.getlist("resubmit"))
+
+        if not comment_ids:
+            messages.error(request, f"No comments selected.")
+            return redirect(reverse("comments", args=[self.organization.slug]))
+
+        if len(comment_ids) > settings.TABLE_PAGE_SIZE:
+            messages.error(request, f"You may only submit {settings.TABLE_PAGE_SIZE} comments at a time.")
+            return redirect(reverse("comments", args=[self.organization.slug]))
+
+        comments = Comment.objects.filter(organization=request.user.organization, id__in=comment_ids)
+
+        found_comment_ids = set([str(c.id) for c in comments])
+        if comment_ids != found_comment_ids:
+            messages.error(request, f"Could not find comments with IDs: {', '.join(comment_ids-found_comment_ids)}.")
+            return redirect(reverse("comments", args=[self.organization.slug]))
+
+        submitted_ids = [str(c.id) for c in comments if c.was_submitted]
+        if submitted_ids:
+            messages.error(request, f"Comments with IDs: {', '.join(submitted_ids)} have already been submitted.")
+            return redirect(reverse("comments", args=[self.organization.slug]))
+
+        for c in comments:
+            tasks.submit_comment.delay(c.id)
+
+        messages.success(request, "Comments queued for submission.")
+
+        return redirect(reverse("comments", args=[self.organization.slug]))
+
+
+class FilteredCommentListView(OrganizationView, ExportMixin, SingleTableMixin, FilterView):
+    table_class = CommentsTable
+    model = Comment
+    template_name = "comments/comment_list.html"
+    export_name = "comments"
+
+    filterset_class = CommentsFilter
+
+    table_pagination = {"per_page": settings.TABLE_PAGE_SIZE}
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.prefetch_related("organization", "document", "commenter")
+
+
+################
+# Public Views #
+################
 
 
 @csrf_exempt
@@ -166,63 +225,3 @@ def comment_view(request, document_slug):
 @xframe_options_exempt
 def comment_thanks_view(request, document_slug):
     return render(request, "comments/comment_thanks.html", {"document": get_object_or_404(Document, slug=document_slug)})
-
-
-@login_required
-def resubmit_comment_view(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id, organization=request.user.organization)
-    if request.method == "POST":
-        if comment.was_submitted:
-            messages.error(request, "Comment has already been successfully submitted.")
-        else:
-            tasks.submit_comment.delay(comment.id)
-            messages.success(request, "Comment queued for submission.")
-        return redirect(reverse("comment-detail", args=[comment.id]))
-    else:
-        raise ViewDoesNotExist()
-
-
-@login_required
-def resubmit_comments_view(request):
-    if request.method == "GET":
-        raise ViewDoesNotExist()
-
-    comment_ids = set(request.POST.getlist("resubmit"))
-
-    if not comment_ids:
-        messages.error(request, f"No comments selected.")
-        return redirect(reverse("comments"))
-
-    if len(comment_ids) > settings.TABLE_PAGE_SIZE:
-        messages.error(request, f"You may only submit {settings.TABLE_PAGE_SIZE} comments at a time.")
-        return redirect(reverse("comments"))
-
-    comments = Comment.objects.for_organization(organization=request.user.organization, id__in=comment_ids)
-
-    found_comment_ids = set([str(c.id) for c in comments])
-    if comment_ids != found_comment_ids:
-        messages.error(request, f"Could not find comments with IDs: {', '.join(comment_ids-found_comment_ids)}.")
-        return redirect(reverse("comments"))
-
-    submitted_ids = [str(c.id) for c in comments if c.was_submitted]
-    if submitted_ids:
-        messages.error(request, f"Comments with IDs: {', '.join(submitted_ids)} have already been submitted.")
-        return redirect(reverse("comments"))
-
-    for c in comments:
-        tasks.submit_comment.delay(c.id)
-
-    messages.success(request, "Comments queued for submission.")
-
-    return redirect(reverse("comments"))
-
-
-class FilteredCommentListView(OrganizationView, ExportMixin, SingleTableMixin, FilterView):
-    table_class = CommentsTable
-    model = Comment
-    template_name = "comments/comment_list.html"
-    export_name = "comments"
-
-    filterset_class = CommentsFilter
-
-    table_pagination = {"per_page": settings.TABLE_PAGE_SIZE}
