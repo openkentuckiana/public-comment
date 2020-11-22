@@ -7,9 +7,10 @@
 
 {% block breadcrumbs %}
     {% clear_breadcrumbs %}
-    {% breadcrumb "Home" "/" %}
-    {% breadcrumb "Documents" "documents" %}
-    {% breadcrumb object.document_id "document_detail" object.document_id %}
+    {% breadcrumb "Home" "org-index" request.user.organization.slug %}
+    {% breadcrumb "Documents" "documents" request.user.organization.slug %}
+    {% breadcrumb object.document_id "document-detail" request.user.organization.slug object.slug %}
+    {% breadcrumb "Delete" "." %}
 {% endblock %}
 
 {% render_breadcrumbs %}
@@ -32,9 +33,9 @@
 
 <div class="row mb-5">
     <div class="col">
-        {% url 'documents' as documents_url %}
-        {% bootstrap_button 'Cancel' button_type='link' extra_classes='mb-2 mr-sm-2' href=documents_url %}
-        <form method="POST" action="{% url 'document-delete' object.slug %}" class="d-inline-block">
+        {% url "document-detail" request.user.organization.slug object.slug as document_url %}
+        {% bootstrap_button 'Cancel' button_type='link' extra_classes='mb-2 mr-sm-2' href=document_url %}
+        <form method="POST" class="d-inline-block">
             {% csrf_token %}
             {% bootstrap_button 'Delete' button_type='submit' button_class='btn-danger' extra_classes='mb-2' %}
         </form>

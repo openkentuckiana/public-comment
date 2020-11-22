@@ -7,7 +7,7 @@
 
 {% block breadcrumbs %}
     {% clear_breadcrumbs %}
-    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Home" "org-index" request.user.organization.slug %}
     {% breadcrumb "Account" "account" %}
     {% breadcrumb "Edit User" "" %}
 {% endblock %}

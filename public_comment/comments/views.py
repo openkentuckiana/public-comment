@@ -6,7 +6,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
@@ -109,7 +109,9 @@ class DocumentUpdate(OrganizationView, UpdateView):
 
 class DocumentDelete(OrganizationView, DeleteView):
     model = Document
-    success_url = reverse_lazy("documents")
+
+    def get_success_url(self):
+        return reverse("documents", args=[self.organization.slug])
 
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
