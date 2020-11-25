@@ -1,6 +1,8 @@
 Public Comment
 ===============
 
+[![Build Status](https://travis-ci.com/codeforkyana/public-comment.svg?branch=main)](https://travis-ci.com/codeforkyana/public-comment)
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/codeforkyana/public-comment)
 
 About
