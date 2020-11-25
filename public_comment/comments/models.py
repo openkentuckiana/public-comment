@@ -60,7 +60,7 @@ class Document(OrganizationOwnedModel):
         ]
 
     def __str__(self):
-        return f"{Truncator(self.title).words(5)} - {self.document_id}"
+        return f"{self.short_title()} - {self.document_id}"
 
     def url(self):
         return f"https://beta.regulations.gov/document/{self.document_id}"

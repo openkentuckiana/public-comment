@@ -16,12 +16,21 @@ logger = logging.getLogger(__name__)
 
 
 class PublicMediaStorage(S3Boto3Storage):
+    """
+    Used by MarkdownxImageForm to set a public-read ACL on objects uploaded to S3.
+    """
+
     default_acl = "public-read"
     file_overwrite = False
     querystring_auth = False
 
 
 class MarkdownxImageForm(ImageForm):
+    """
+    Extends MarkdownX's ImageForm, overriding the _save method and using
+    PublicMediaStorage to set a public read ACL on uploaded objects (ie. all uploaded objects are public).
+    """
+
     def _save(self, image, file_name, commit):
         unique_file_name = self.get_unique_file_name(file_name)
         full_path = path.join("markdownx", unique_file_name)
@@ -53,7 +62,7 @@ class DocumentCreateForm(forms.ModelForm):
         document_id = cleaned_data.get("document_id")
         organization = self.user.organization
 
-        if Document.objects.filter(document_id=document_id, deleted_at=None).count():
+        if Document.objects.filter(organization=self.user.organization, document_id=document_id, deleted_at=None).count():
             raise ValidationError("You already have created this document")
 
         try:
@@ -88,7 +97,6 @@ class DocumentUpdateForm(forms.ModelForm):
 
         client_mode = cleaned_data.get("client_mode")
         organization = self.user.organization
-
         if client_mode == ClientMode.LIVE and not organization.regulations_gov_api_key:
             self.add_error("client_mode", "You must set an organization regulations.gov API key to enable live mode.")
 

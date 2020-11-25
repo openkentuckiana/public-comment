@@ -12,7 +12,7 @@ You can run all tests by running `make test` from your command line.
 
 ## Submitting changes
 
-Please send a [GitHub Pull Request to renters-rights](https://github.com/codeforkyana/renters-rights/pull/new/master) with a clear list of what you've done (read more about [pull requests](http://help.github.com/pull-requests/)). Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit).
+Please send a [GitHub Pull Request to public-comment](https://github.com/codeforkyana/public-comment/pull/new/master) with a clear list of what you've done (read more about [pull requests](http://help.github.com/pull-requests/)). Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit).
 
 Always write a clear log message for your commits. One-line messages are fine for small changes, but bigger changes should look like this:
 
