@@ -222,7 +222,11 @@ def comment_view(request, organization_slug, document_slug):
     else:
         form = CommentForm(document=document)
 
-    return render(request, "comments/comment_form.html", {"form": form, "document": document})
+    return render(
+        request,
+        "comments/comment_form.html",
+        {"form": form, "document": document, "is_staging_api": settings.USE_STAGING_REGULATIONS_API},
+    )
 
 
 @csrf_exempt

@@ -231,5 +231,6 @@ CSP_DEFAULT_SRC = ["'self'", "code.jquery.com", "cdn.jsdelivr.net", "stackpath.b
 CSP_IMG_SRC = ["*"]
 CSP_FRAME_SRC = ["'self'"]
 
-
 DEFAULT_FROM_EMAIL = get_env_variable("DEFAULT_FROM_EMAIL", "webmaster@localhost")
+
+USE_STAGING_REGULATIONS_API = str_to_bool(get_env_variable("USE_STAGING_REGULATIONS_API", "False"))

@@ -3,12 +3,15 @@ import logging
 
 import httpx
 import respx
+from django.conf import settings
 from httpx import Response
 
 from comments.models import ClientMode, Comment
 from organizations.models import Organization
 
 logger = logging.getLogger(__name__)
+
+API_BASE_URL = "https://api-staging.regulations.gov" if settings.USE_STAGING_REGULATIONS_API else "https://api.regulations.gov/"
 
 
 def submit_comment(comment: Comment):
@@ -17,7 +20,7 @@ def submit_comment(comment: Comment):
     uid = m.hexdigest()
 
     with get_context(comment.client_mode):
-        url = f"https://api.regulations.gov/v4/comments/{comment.document.document_id}"
+        url = f"{API_BASE_URL}/v4/comments/{comment.document.document_id}"
 
         comment_submission = {
             "id": uid,
@@ -43,7 +46,7 @@ def submit_comment(comment: Comment):
 
 def get_document(document_id: str, organization: Organization):
     response = httpx.get(
-        f"https://api.regulations.gov/v4/documents/{document_id}", headers={"X-Api-Key": organization.regulations_gov_api_key}
+        f"{API_BASE_URL}/v4/documents/{document_id}", headers={"X-Api-Key": organization.regulations_gov_api_key}
     )
     return response.json()
 

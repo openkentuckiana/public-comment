@@ -84,6 +84,9 @@ class Document(OrganizationOwnedModel):
             return True
         return False
 
+    def is_in_test_mode(self):
+        return self.client_mode == ClientMode.TESTING
+
     @staticmethod
     def set_from_api_response(document, api_response, organization):
         regulations_document = api_response["data"]["attributes"]

@@ -58,3 +58,5 @@ while sleep < 30:
         time.sleep(sleep)
         sleep *= 2
 ########## END S3 CONFIGURATION
+
+USE_STAGING_REGULATIONS_API = True

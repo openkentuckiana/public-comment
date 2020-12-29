@@ -36,6 +36,7 @@
     <div class="card-body">
         <h3>{% trans 'Leave a comment' %}</h3>
 
+        <p>{% trans 'You are commenting on ' %}<a href="{{document.url}}" target="_parent">{{document.document_id }}</a></p>
         <form method="post" novalidate>
             {% csrf_token %}
             {% bootstrap_form form %}
@@ -43,6 +44,14 @@
         </form>
 
         <p><small class="text-muted">{% trans 'You will receive an email notification when your comment has been submitted.' %}</small></p>
+
+        {% if document.is_in_test_mode %}
+            <p><strong>Document is in test mode. Comment will not be submitted to regulations.gov, it will only be logged.</strong></p>
+        {% elif is_staging_api %}
+            <p><strong>Currently using the staging API. Comment will be submitted to <a href="https://staging.regulations.gov" target="_parent">staging.regulations.gov</a>, not the public commenting site. This should only be the case when testing or developing.</strong></p>
+        {% endif %}
+
+        <p>Regulations.gov <a href="https://beta.regulations.gov/user-notice" target="_parent">terms of participation</a> | Regulations.gov <a href="https://beta.regulations.gov/privacy-notice" target="_parent">privacy notice</a></p>
     </div>
 
 {% endif %}
