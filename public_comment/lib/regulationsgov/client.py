@@ -11,7 +11,7 @@ from organizations.models import Organization
 
 logger = logging.getLogger(__name__)
 
-API_BASE_URL = "https://api-staging.regulations.gov" if settings.USE_STAGING_REGULATIONS_API else "https://api.regulations.gov/"
+API_BASE_URL = "https://api-staging.regulations.gov" if settings.USE_STAGING_REGULATIONS_API else "https://api.regulations.gov"
 
 
 def submit_comment(comment: Comment):
