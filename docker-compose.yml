@@ -39,6 +39,7 @@ services:
       - DJANGO_REQUEST_LOG_LEVEL=DEBUG
       - PYTHONUNBUFFERED=1
       - REDISCLOUD_URL=redis://redis:6379/0
+      - USE_STAGING_REGULATIONS_API=${USE_STAGING_REGULATIONS_API:-True}
     volumes:
       - ./public_comment:/app
     networks:
@@ -60,6 +61,7 @@ services:
       - PYTHONUNBUFFERED=1
       - REDISCLOUD_URL=redis://redis:6379/0
       - COLUMNS=80
+      - USE_STAGING_REGULATIONS_API=${USE_STAGING_REGULATIONS_API:-True}
     volumes:
       - ./public_comment:/app
     networks:
