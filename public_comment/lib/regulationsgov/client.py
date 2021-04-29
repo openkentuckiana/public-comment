@@ -20,27 +20,32 @@ def submit_comment(comment: Comment):
     uid = m.hexdigest()
 
     with get_context(comment.client_mode):
-        url = f"{API_BASE_URL}/v4/comments/"
+        url = f"{API_BASE_URL}/v4/comments"
 
         comment_submission = {
             "data": {
                 "type": "comments",
                 "attributes": {
-                    "public_comment": comment.comment,
+                    "comment": comment.comment,
                     "commentOnDocumentId": comment.document.document_id,
                     "submissionKey": uid,
                     "submissionType": "API",
                     "firstName": comment.commenter.first_name,
                     "lastName": comment.commenter.last_name,
                     "email": comment.commenter.email,
-                    "submitterType": "Individual",
+                    "submitterType": "INDIVIDUAL",
                 },
             }
         }
 
         if comment.client_mode == ClientMode.TESTING:
             respx.post(url).mock(return_value=Response(204, json={"testing_mode": True}))
-        response = httpx.post(url, headers={"X-Api-Key": comment.organization.regulations_gov_api_key}, json=comment_submission)
+
+        response = httpx.post(
+            url,
+            headers={"X-Api-Key": comment.organization.regulations_gov_api_key, "Content-Type": "application/vnd.api+json"},
+            json=comment_submission,
+        )
 
         return response
 

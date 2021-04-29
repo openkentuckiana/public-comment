@@ -35,19 +35,20 @@ def submit_comment(comment_id):
         comment.regulations_gov_response = response.json()
         comment.was_submitted = True
         comment.submitted_at = datetime.now()
+        comment.tracking_number = comment.regulations_gov_response.get("data", {}).get("id")
         comment.save()
     except HTTPStatusError as exc:
         # Retry for server issues
         if exc.response.status_code >= 500:
             raise RetryableHTTPStatusError(str(exc), request=exc.request, response=exc.response)
         else:
-            raise Exception(f"Could not submit comment: {exc}")
+            raise Exception(f"Could not submit comment: {exc}. {exc.response.text}")
 
     # Confirm
     template = "comments/comment-submitted-email.txt"
     html_template = "comments/comment-submitted-email.html"
 
     subject, to = (_(f"Your comment has been submitted"), comment.commenter.email)
-    msg = EmailMultiAlternatives(subject, render_to_string(template, {}), None, [to])
-    msg.attach_alternative(render_to_string(html_template, {}), "text/html")
+    msg = EmailMultiAlternatives(subject, render_to_string(template, {"comment": comment}), None, [to])
+    msg.attach_alternative(render_to_string(html_template, {"comment": comment}), "text/html")
     msg.send()

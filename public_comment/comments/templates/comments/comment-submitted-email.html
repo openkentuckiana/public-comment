@@ -1,1 +1,5 @@
-Your comment has been submitted.
+Your comment on <a href="{{ comment.document.url }}">{{ comment.document.title }}</a> has been submitted.<br>
+<br>
+{% if comment.tracking_number %}
+Your comment tracking number is {{ comment.tracking_number }}.
+{% endif %}

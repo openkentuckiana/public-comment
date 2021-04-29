@@ -1,1 +1,5 @@
-Your comment has been submitted.
+Your comment on {{ comment.document.title }} has been submitted.
+
+{% if comment.tracking_number %}
+Your comment tracking number is {{ comment.tracking_number }}.
+{% endif %}

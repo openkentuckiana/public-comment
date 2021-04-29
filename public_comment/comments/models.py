@@ -63,7 +63,7 @@ class Document(OrganizationOwnedModel):
         return f"{self.short_title()} - {self.document_id}"
 
     def url(self):
-        return f"https://beta.regulations.gov/document/{self.document_id}"
+        return f"https://www.regulations.gov/document/{self.document_id}"
 
     def get_absolute_url(self):
         return reverse("document-detail", args=[self.organization.slug, self.slug])
@@ -127,6 +127,7 @@ class Comment(OrganizationOwnedModel):
     comment = models.TextField()
     was_submitted = models.BooleanField(default=False)
     submitted_at = models.DateTimeField(null=True, blank=True)
+    tracking_number = models.CharField(null=True, blank=True, max_length=255)
     regulations_gov_response = models.JSONField(null=True, blank=True)
     client_mode = models.CharField(
         max_length=1,
