@@ -33,6 +33,7 @@ def submit_comment(comment: Comment):
                     "firstName": comment.commenter.first_name,
                     "lastName": comment.commenter.last_name,
                     "email": comment.commenter.email,
+                    "sendEmailReceipt": True,
                     "submitterType": "INDIVIDUAL",
                 },
             }
