@@ -33,6 +33,9 @@ class IndexView(View):
         return super().__call__(*args, **kwargs)
 
     def get(self, request):
+        if request.user.is_authenticated:
+            return redirect(reverse("org-index", args=[request.user.organization.slug]))
+
         return render(request, "index.html")
 
 
