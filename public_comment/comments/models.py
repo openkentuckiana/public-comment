@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 
 from dateutil import tz
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.serializers import serialize
 from django.db import models
@@ -63,7 +64,8 @@ class Document(OrganizationOwnedModel):
         return f"{self.short_title()} - {self.document_id}"
 
     def url(self):
-        return f"https://www.regulations.gov/document/{self.document_id}"
+        prefix = "staging" if settings.USE_STAGING_REGULATIONS_API else "www"
+        return f"https://{prefix}.regulations.gov/document/{self.document_id}"
 
     def get_absolute_url(self):
         return reverse("document-detail", args=[self.organization.slug, self.slug])
