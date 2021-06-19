@@ -37,6 +37,7 @@ class Document(OrganizationOwnedModel):
     slug = models.SlugField()
     title = models.CharField(max_length=500)
     description = MarkdownxField(null=True, blank=True)
+    suggested_comment = models.TextField(null=True, blank=True)
     is_accepting_comments = models.BooleanField(default=False)
     is_withdrawn = models.BooleanField(default=False)
     document_type = models.CharField(max_length=50)

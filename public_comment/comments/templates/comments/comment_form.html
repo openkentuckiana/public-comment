@@ -14,7 +14,7 @@
     <div class="card-body mb-4">
         <h3>Comment period starts at {{ form.document.comment_start_date }}.</h3>
     </div>
-{% elif not form.document.is_accepting_comments %}
+{% elif not form.document.is_accepting_comments and not form.document.comment_end_date_passed %}
     <div class="card-body mb-4">
         <h3>Not accepting comments at this time.</h3>
     </div>
@@ -39,7 +39,22 @@
         <p>{% trans 'You are commenting on ' %}<a href="{{document.url}}" target="_parent">{{document.document_id }}</a></p>
         <form method="post" novalidate>
             {% csrf_token %}
-            {% bootstrap_form form %}
+            {% bootstrap_field form.first_name %}
+            {% bootstrap_field form.last_name %}
+            {% bootstrap_field form.email %}
+
+
+            {% if form.document.suggested_comment %}
+            <label for="id_suggested_comment">Suggested comment</label>
+<!--            <textarea id="id_suggested_comment" disabled class="md-textarea form-control mb-3" rows="10">{{ form.document.suggested_comment }}</textarea>-->
+            <div class="pl-3 pr-3 mb-3 font-italic">
+                <p id="suggested-comment">{{ form.document.suggested_comment }}</p>
+                <button class="btn btn-primary mb-2 mr-sm-2" type="button" id="use-selected-comment">Use our suggested comment</button>
+            </div>
+            {% endif %}
+
+            {% bootstrap_field form.comment %}
+
             {% bootstrap_button 'Submit your comment' button_type='submit' extra_classes='mb-2 mr-sm-2' %}
         </form>
 
@@ -53,6 +68,19 @@
 
         <p>Regulations.gov <a href="https://www.regulations.gov/user-notice" target="_parent">terms of participation</a> | Regulations.gov <a href="https://www.regulations.gov/privacy-notice" target="_parent">privacy notice</a></p>
     </div>
+
+    <script nonce="{{request.csp_nonce}}">
+        let suggestedComment = document.getElementById("suggested-comment");
+        let suggestedButton = document.getElementById("use-selected-comment");
+        let comment = document.getElementById("id_comment");
+        suggestedButton.addEventListener("click", function() {
+            if (confirm("This will replace your comment")) {
+            console.log(comment);
+            console.log('bret');
+                comment.value = suggestedComment.innerText;
+            }
+        });
+    </script>
 
 {% endif %}
 

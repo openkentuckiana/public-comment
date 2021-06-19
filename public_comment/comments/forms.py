@@ -90,7 +90,7 @@ class DocumentUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Document
-        fields = ["title", "description", "client_mode"]
+        fields = ["title", "description", "suggested_comment", "client_mode"]
 
     def clean(self):
         cleaned_data = super().clean()
