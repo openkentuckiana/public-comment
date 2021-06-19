@@ -52,7 +52,7 @@ class DocumentCreateFormTests(UnitBaseTestCase):
 
 class DocumentUpdateFormTests(UnitBaseTestCase):
     def test_fields(self):
-        self.assertEqual(DocumentUpdateForm.Meta.fields, ["title", "description", "client_mode"])
+        self.assertEqual(DocumentUpdateForm.Meta.fields, ["title", "description", "suggested_comment", "client_mode"])
 
     def test_updates_document(self):
         form = DocumentUpdateForm(
