@@ -36,7 +36,7 @@
     <div class="card-body">
         <h3>{% trans 'Leave a comment' %}</h3>
 
-        <p>{% trans 'You are commenting on ' %}<a href="{{document.url}}" target="_parent">{{document.document_id }}</a></p>
+        <p>{% trans 'You are commenting on ' %}<a href="{{document.url}}" target="_parent">{{document.document_id }}</a>. Your comment will be visible to the public on regulations.gov.</p>
         <form method="post" novalidate>
             {% csrf_token %}
             {% bootstrap_field form.first_name %}
