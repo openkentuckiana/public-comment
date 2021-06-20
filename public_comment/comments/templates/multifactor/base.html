@@ -22,7 +22,9 @@
 	{% block page %}
 	<div class="card" id="card">
 		<div class="card-header">
-			{% include "multifactor/brand.html" %}
+			{% if not "multifactor/authenticate" in request.path %}
+				{% include "multifactor/brand.html" %}
+			{% endif %}
 			<h1 class="">{% block card_title %}{% endblock %}</h1>
 		</div>
 		<div class="card-content" id="content">
