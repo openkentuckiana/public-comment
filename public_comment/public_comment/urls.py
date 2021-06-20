@@ -1,3 +1,4 @@
+from csp.decorators import csp_exempt
 from decorator_include import decorator_include
 from django.conf import settings
 from django.conf.urls import url
@@ -10,7 +11,7 @@ from multifactor.decorators import multifactor_protected
 admin.site.site_header = "Gov Commenter Administration"
 
 urlpatterns = [
-    path("account/multifactor/", include("multifactor.urls")),
+    path("account/multifactor/", decorator_include(csp_exempt, "multifactor.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
     path("admin/", decorator_include(multifactor_protected(factors=1, max_age=60 * 60 * 72, advertise=True), admin.site.urls)),
     path("", include("comments.urls")),
