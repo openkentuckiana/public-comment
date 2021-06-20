@@ -31,6 +31,14 @@
     {% bootstrap_button 'Edit User Information' button_type='link' href=edit_url extra_classes='mb-2' %}
 </div>
 
+<div class="card-body mb-4">
+    <h2>Multi-factor Authentication</h2>
+    {% url 'multifactor:home' as mfa_home %}
+    <p class="font-italic">Multi-factor authentication helps protect your account. Please enable it.</p>
+    <p><b>Status</b>: {% if user.mfa_enabled %}Enabled{% else %}Not Enabled{% endif %}</p>
+    {% bootstrap_button 'Edit Multi-factor Configuration' button_type='link' href=mfa_home extra_classes='mb-2' %}
+</div>
+
 <div class="card-body">
     <h2>Organization Information</h2>
         <table class="table mb-4">

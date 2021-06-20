@@ -24,6 +24,9 @@ class User(AbstractUser, BaseModel):
 
     REQUIRED_FIELDS = ["organization"]
 
+    def mfa_enabled(self):
+        return self.multifactor_keys.filter(enabled=True).count() > 0
+
 
 class Organization(BaseModel):
     TIMEZONES = tuple(zip(pytz.all_timezones, pytz.all_timezones))

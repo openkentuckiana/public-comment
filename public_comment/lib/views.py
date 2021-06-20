@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.utils.decorators import method_decorator
 from django.views.generic import View
+from multifactor.decorators import multifactor_protected
 
 from . import _thread_locals
 
@@ -20,6 +21,10 @@ class ProtectedView(View):
     pass
 
 
+mfp = multifactor_protected(factors=0, max_age=60 * 60 * 72, advertise=True)
+
+
+@method_decorator(mfp, name="dispatch")
 class OrganizationView(ProtectedView):
     def dispatch(self, request, *args, **kwargs):
         self.organization = getattr(_thread_locals, "organization")

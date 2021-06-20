@@ -22,7 +22,7 @@ gunicorn = ">=19.9.0"
 django-sass-processor = {git = "https://github.com/jrief/django-sass-processor",ref = "master"}
 httpx = "*"
 celery = ">=4.4.7,<5.0.0"
-django-celery-results = "*"
+django-celery-results = ">=1.2.1,<2.0.0"
 redis = "*"
 respx = "*"
 django-markdownx = "*"
@@ -37,6 +37,8 @@ tablib = "*"
 django-decorator-include = "*"
 django-csp = "*"
 newrelic = "*"
+django-multifactor = "*"
+django-user-sessions = "*"
 
 [dev-packages]
 black = "==19.3b0"

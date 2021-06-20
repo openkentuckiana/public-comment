@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     "markdownx",
     "active_link",
+    "multifactor",
 ]
 
 MIDDLEWARE = [
@@ -121,6 +122,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "csp.context_processors.nonce",
             ]
         },
         "APP_DIRS": True,
@@ -228,9 +230,21 @@ TABLE_PAGE_SIZE = 50
 
 # Content security policy settings
 CSP_DEFAULT_SRC = ["'self'", "code.jquery.com", "cdn.jsdelivr.net", "stackpath.bootstrapcdn.com", "cdnjs.cloudflare.com"]
-CSP_IMG_SRC = ["*"]
+CSP_IMG_SRC = ["'self'", "http:", "https:"]
 CSP_FRAME_SRC = ["'self'"]
 
 DEFAULT_FROM_EMAIL = get_env_variable("DEFAULT_FROM_EMAIL", "webmaster@localhost")
 
 USE_STAGING_REGULATIONS_API = str_to_bool(get_env_variable("USE_STAGING_REGULATIONS_API", "False"))
+
+MULTIFACTOR = {
+    "LOGIN_CALLBACK": False,  # False, or dotted import path to function to process after successful authentication
+    "RECHECK": True,  # Invalidate previous authorisations at random intervals
+    "RECHECK_MIN": 60 * 60 * 48,  # No recheks before 3 hours
+    "RECHECK_MAX": 60 * 60 * 72,  # But within 6 hours
+    "FIDO_SERVER_ID": "www.govcommenter.com",  # Server ID for FIDO request
+    "FIDO_SERVER_NAME": "Gov Commenter",  # Human-readable name for FIDO request
+    "TOKEN_ISSUER_NAME": "Gov Commenter",  # TOTP token issuing name (to be shown in authenticator)
+    "U2F_APPID": "https://www.govcommenter.com",  # U2F request issuer
+    "FACTORS": ["FIDO2", "TOTP"],
+}

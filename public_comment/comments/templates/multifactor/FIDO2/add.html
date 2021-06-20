@@ -1,0 +1,56 @@
+{% extends "multifactor/base.html" %}{% load static %}
+
+{% block card_title %}FIDO2 Security Key{% endblock %}
+
+{% block content %}
+<p class="has-text-centered">Follow your browser's instructions to continue.</p>
+{% endblock %}
+
+{% block head %}
+{{ block.super }}
+<script type="application/javascript" src="{% static 'multifactor/js/cbor.min.js'%}"></script>
+{% block fido_scripting %}
+<script type="application/javascript" nonce="{{request.csp_nonce}}">
+function authenticate() {
+	fetch("{% url 'multifactor:fido2_begin_reg' %}", {})
+	.then(function(response) {
+		if(response.ok)
+			return response.arrayBuffer();
+		throw new Error('Error getting registration data!');
+	})
+	.then(CBOR.decode)
+	.then(function(options) {
+		options.publicKey.attestation = "direct"
+		return navigator.credentials.create(options);
+	})
+	.then(function(attestation) {
+		return fetch("{% url 'multifactor:fido2_complete_reg' %}", {
+			method: 'POST',
+			headers: {'Content-Type': 'application/cbor'},
+			body: CBOR.encode({
+				"attestationObject": new Uint8Array(attestation.response.attestationObject),
+				"clientDataJSON": new Uint8Array(attestation.response.clientDataJSON),
+			})
+		});
+	})
+	.then(function(response) {
+		var stat = response.ok ? 'successful' : 'unsuccessful';
+		return response.json();
+	})
+	.then(function (res) {
+		if (res["status"] =='OK')
+			window.location.href = "{% url 'multifactor:home' %}";
+		else
+			display_error("<p>"+res["message"]+"</p><p><a href='javascript:void(0)' onclick='begin_reg()'>try again</a> or <a href='{% url 'multifactor:home' %}'>Go to Multifactor Dashboard</a></p>");
+	}, function(reason) {
+		display_error("<p>"+reason+"</p><p><a href='javascript:void(0)' onclick='begin_reg()'>Try again</a> or <a href='{% url 'multifactor:home' %}'>Go to Multifactor Dashboard</a></p>");
+	});
+}
+
+if (location.protocol != 'https:')
+	display_error("FIDO2 only works under HTTPS");
+else
+	setTimeout(authenticate, 500);
+</script>
+{% endblock fido_scripting %}
+{% endblock %}
