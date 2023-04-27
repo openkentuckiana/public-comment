@@ -1,7 +1,7 @@
 FROM python:3.8
 
 RUN apt-get update && \
-	apt-get install zlib1g-dev binutils libproj-dev gdal-bin libgeoip1 python-gdal -y && \
+	apt-get install zlib1g-dev binutils libproj-dev gdal-bin libgeoip1 python3-gdal -y && \
 	apt-get install python3-pip git -y && \
 	apt-get install build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi gettext postgresql-client -y && \
 	pip3 install pipenv && \
